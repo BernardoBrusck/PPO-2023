@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="main.css">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css')}}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <title>GeraWeb - Demo</title>
+</head>
+
+<body>
+    <button class="add_db" id="add_db">DataBase +</button>
+
+    <div class="modal">
+
+        <!-- Criação de um novo Projeto -->
+
+        <form action="" class="menu1" method="post">
+            <h1>DataBase<span class="close1" tabindex="5">&times;</span></h1>
+            <br>
+            <input id="titulo_projeto" name="titulo_projeto" type="text" placeholder="nome..." style="padding: 5px;"
+                required>
+            <br>
+            <textarea id="descricao_projeto" name="descricao_projeto" cols="" rows="10" placeholder="Descrição..."
+                style="padding: 5px;"></textarea>
+            <br>
+            <h2>Tabelas</h2>
+            <div class="tabelas_BD" id="tabelasBD" style="border: 1px solid #bdbdbd; padding-left: 5px;">
+
+            </div>
+
+            <button class="add_tabela" type="button" style="margin-bottom: 5px;">Adicionar Tabela</button>
+            <button class="salvar_projeto" type="submit">Salvar Projeto</button>
+        </form>
+
+        <!-- Criação da Tabela do Banco de Dados -->
+
+        <form action="/salvar_tabela" class="menu2" onsubmit="event.preventDefault();" method="post">
+            <h1><input type="text" placeholder="Nome da Tabela"> <span class="close2" tabindex="5">&times;</span></h1>
+            <br>
+
+            <div class="tuplas_tabela">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Primary Key</th>
+                            <th>Nome</th>
+                            <th>Tipo</th>
+                            <th>Not Null</th>
+                            <th>Foreign Key</th>
+                            <th>Apagar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+            </div>
+
+            <button class="add_tupla" id="add_tupla" type="button">Adicionar Tupla</button>
+
+            <div class="bbt_tabela">
+                <button class="deletar_tabela">Deletar Tabela</button>
+                <button class="salvar_tabela" onclick="salvar_tabela" type="button">Salvar Tabela</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        const addprojeto = document.getElementById("add_db")
+
+        const modal = document.querySelector(".modal")
+
+        const menu1 = document.querySelector(".menu1")
+        const span1 = document.querySelector(".close1")
+        const edit = document.querySelector(".lapis")
+        const add_tabela = document.querySelector(".add_tabela")
+
+        const menu2 = document.querySelector(".menu2")
+        const span2 = document.querySelector(".close2")
+
+        addprojeto.onclick = function () {
+            modal.style.visibility = "visible"
+        }
+
+        span1.onclick = function () {
+            modal.style.visibility = "hidden"
+        }
+
+        add_tabela.onclick = function () {
+            menu1.style.display = "none"
+            menu2.style.display = "flex"
+        }
+
+        span2.onclick = function () {
+            menu1.style.display = "flex"
+            menu2.style.display = "none"
+        }
+
+        function isTbodyEmpty() {
+            const tabelaBody = document.querySelector('tbody');
+            return tabelaBody.childElementCount === 0;
+        }
+
+        function addNewRow() {
+            const newRow = createRow();
+            const tabelaBody = document.querySelector('tbody');
+            tabelaBody.appendChild(newRow);
+        }
+
+        if (isTbodyEmpty()) {
+            addNewRow();
+        }
+
+        const addTuplaButton = document.getElementById('add_tupla');
+        const tabelaBody = document.querySelector('tbody');
+
+        addTuplaButton.addEventListener('click', addNewRow);
+
+        function createRow() {
+            const newRow = document.createElement('tr');
+
+            const primaryKeyCell = document.createElement('td');
+            const primaryKeyCheckbox = document.createElement('input');
+            primaryKeyCheckbox.type = 'checkbox';
+            primaryKeyCheckbox.addEventListener('change', function () {
+                const nomeInput = this.parentNode.nextElementSibling.querySelector('input[type="text"]');
+                const tipoSelect = this.parentNode.nextElementSibling.nextElementSibling.querySelector('select');
+                const notNullCheckbox = this.parentNode.nextElementSibling.nextElementSibling.nextElementSibling.querySelector('input[type="checkbox"]');
+
+                nomeInput.value = this.checked ? 'ID' : '';
+                nomeInput.readOnly = this.checked;
+                tipoSelect.value = this.checked ? 'number' : 'text';
+                tipoSelect.disabled = this.checked;
+                notNullCheckbox.checked = this.checked;
+                notNullCheckbox.disabled = this.checked;
+            });
+
+            primaryKeyCell.appendChild(primaryKeyCheckbox);
+            newRow.appendChild(primaryKeyCell);
+
+            const nomeCell = document.createElement('td');
+            nomeCell.innerHTML = '<input type="text" required>';
+            newRow.appendChild(nomeCell);
+
+            const tipoCell = document.createElement('td');
+            tipoCell.innerHTML = `
+        <select>
+          <option value="text">Text</option>
+          <option value="number">Number</option>
+          <option value="date">Date</option>
+        </select>
+      `;
+            newRow.appendChild(tipoCell);
+
+            const notNullCell = document.createElement('td');
+            notNullCell.innerHTML = '<input type="checkbox">';
+            newRow.appendChild(notNullCell);
+
+            const foreignKeyCell = document.createElement('td');
+            const foreignKeyCheckbox = document.createElement('input');
+            foreignKeyCheckbox.type = 'checkbox';
+            foreignKeyCheckbox.addEventListener('change', function () {
+                const input = this.nextElementSibling;
+                input.style.display = this.checked ? 'block' : 'none';
+
+                if (this.checked) {
+                    input.setAttribute('required', 'required');
+                } else {
+                    input.removeAttribute('required');
+                }
+            });
+            foreignKeyCell.appendChild(foreignKeyCheckbox);
+
+            const foreignKeyInput = document.createElement('input');
+            foreignKeyInput.type = 'text';
+            foreignKeyInput.style.display = 'none';
+            foreignKeyCell.appendChild(foreignKeyInput);
+
+            newRow.appendChild(foreignKeyCell);
+
+            const deleteCell = document.createElement('td');
+            const deleteButton = document.createElement('button');
+            const deleteImage = document.createElement('img');
+            deleteCell.className = 'delete-cell';
+            deleteImage.src = 'https://cdn.discordapp.com/attachments/977933870467018792/1105986530729795654/trash.png';
+            deleteImage.width = '30';
+            deleteButton.style.background = 'transparent';
+            deleteButton.style.border = 'none';
+            deleteButton.style.width = '100%';
+            deleteButton.style.height = '100%';
+            deleteButton.appendChild(deleteImage);
+            deleteButton.addEventListener('click', function () {
+                newRow.remove();
+                tabelaBody.childElementCount--;
+
+                if (isTbodyEmpty()) {
+                    addNewRow();
+                }
+            });
+            deleteCell.appendChild(deleteButton);
+            newRow.appendChild(deleteCell);
+
+            return newRow;
+        }
+
+        function salvar_tabela() {
+            const nomeTabelaInput = document.querySelector('.menu2 input[type="text"]');
+            const nomeTabela = nomeTabelaInput.value;
+
+            const tabelaContainer = document.createElement('div');
+            tabelaContainer.className = 'tabela_container';
+
+            const titulo = document.createElement('h3');
+            titulo.innerHTML = `&lt;input type="text" placeholder="Nome da Tabela"&gt;`;
+            titulo.querySelector('input').value = nomeTabela;
+
+            const editarButton = document.createElement('button');
+            editarButton.className = 'lapis';
+            editarButton.style.background = 'transparent';
+            editarButton.style.border = 'none';
+            editarButton.addEventListener('click', function () {
+                const modal = document.querySelector('.modal');
+                const menu1 = document.querySelector('.menu1');
+                const menu2 = document.querySelector('.menu2');
+
+                menu1.style.display = 'none';
+                menu2.style.display = 'flex';
+                modal.style.visibility = 'visible';
+
+                const tabelaNomeInput = document.querySelector('.menu2 input[type="text"]');
+                tabelaNomeInput.value = nomeTabela;
+            });
+
+            const editarIcon = document.createElement('h2');
+            editarIcon.innerHTML = '&#9998';
+            editarButton.appendChild(editarIcon);
+
+            tabelaContainer.appendChild(titulo);
+            tabelaContainer.appendChild(editarButton);
+
+            const tabelasBD = document.querySelector('.tabelas_BD');
+            tabelasBD.appendChild(tabelaContainer);
+        }
+    </script>
+</body>
+
+</html>

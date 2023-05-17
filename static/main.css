@@ -1,0 +1,136 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+button {
+    cursor: pointer;
+    border: 1px solid #ddd;
+    background: #f2f2f2;
+    padding: 5px;
+}
+
+.add_projeto {
+    cursor: pointer;
+}
+
+.modal {
+    background-color: #00000041;
+    visibility: hidden;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.menu1 {
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    width: 400px;
+}
+
+h1 {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+span {
+    cursor: pointer;
+}
+
+.tabelas_BD {
+    max-height: 87px;
+    overflow-y: auto;
+    margin: 10px 0;
+}
+
+.tabela_container {
+    display: flex;
+    width: auto;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.menu2 {
+    background: #fff;
+    display: none;
+    flex-direction: column;
+    padding: 20px;
+}
+
+.menu2 h1 input {
+    font-size: 24px;
+    font-weight: bold;
+    border: 1px solid #ddd;
+    background: #f2f2f2;
+    padding: 5px;
+}
+
+.tuplas_tabela {
+    max-height: 425px;
+    overflow-y: auto;
+}
+
+table {
+    border-collapse: collapse;
+    width: max-content;
+    margin-bottom: 10px;
+}
+
+th,
+td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
+tbody input[type="checkbox"] {
+    margin: 0;
+}
+
+tbody input[type="text"],
+tbody select {
+    margin: 0;
+    display: block;
+    margin: 0 auto;
+    padding: 5px;
+    border: 1px solid #b6b6b6;
+}
+
+.bbt_tabela {
+    margin-top: 12.50px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.bbt_tabela button {
+    width: 49%;
+}
+
+td.delete-cell{
+    transition: all 0.3s;
+}
+
+td.delete-cell:hover,
+td.delete-cell:focus {
+    background-color: rgb(255, 144, 144);
+}
